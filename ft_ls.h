@@ -27,7 +27,7 @@
 ** listxattr getxattr
 */
 
-# include <ses/xattr.h>
+# include <sys/xattr.h>
 
 /*
 ** time ctime
@@ -35,6 +35,11 @@
 
 # include <time.h>
 
+/*
+**	stat lstat
+*/
+
+# include <sys/stat.h>
 
 typedef struct		s_flags
 {
@@ -42,23 +47,31 @@ typedef struct		s_flags
 	char recursive; // -R
 	char all_files; // -a
 	char reverse; // -r
-	char modif_date_sort; // -t
+	char modif_data_sort; // -t
 
 /*
 ** bonuses
 */
 
-	char one_file_per_line_output; // -1
 	char colored_output; // -G
-	char access_date_sort; // -u
-	char creation_date_sort; // -U
-	char all_files_without_self; // -A
-	char hide_owner; // -g
+	char one_file_per_line_output; // -1
 	char one_line_output; // -m
-	char dir_with_slash; // -p
+
+	char creation_data_sort; // -U
+	char access_data_sort; // -u
 	char size_sort; // -S
-	char converted size; // -h
+
+	char hide_owner; // -g
+	char converted_size; // -h
+	char full_time; // -T
+	char group_name_id; // -n
+
+	char all_files_without_self; // -A
+	char dir_with_slash; // -p
 }					t_flags;
+
+void				print_flags(t_flags flags);
+int					get_flags(int argc, char **argv, t_flags *flags);
 
 /*
 typedef struct		s_data
