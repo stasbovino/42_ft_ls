@@ -1,78 +1,91 @@
 #include "ft_ls.h"
 
-void		print_flags(t_flags flags)
+int			check_for_self(char *s)
 {
-	if (flags.list_output == 1)
-		ft_printf("-l ");
-	if (flags.recursive == 1)
-		ft_printf("-R ");
-	if (flags.all_files == 1)
-		ft_printf("-a ");
-	if (flags.reverse == 1)
-		ft_printf("-r ");
-	if (flags.modif_data_sort == 1)
-		ft_printf("-t ");
-	if (flags.colored_output == 1)
-		ft_printf("-G ");
-	if (flags.one_file_per_line_output == 1)
-		ft_printf("-1 ");
-	if (flags.one_line_output == 1)
-		ft_printf("-m ");
-	if (flags.creation_data_sort == 1)
-		ft_printf("-U ");
-	if (flags.access_data_sort == 1)
-		ft_printf("-u ");
-	if (flags.size_sort == 1)
-		ft_printf("-S ");
-	if (flags.hide_owner == 1)
-		ft_printf("-g ");
-	if (flags.converted_size == 1)
-		ft_printf("-h ");
-	if (flags.full_time == 1)
-		ft_printf("-T ");
-	if (flags.group_name_id == 1)
-		ft_printf("-n ");
-	if (flags.all_files_without_self == 1)
-		ft_printf("-A ");
-	if (flags.dir_with_slash == 1)
-		ft_printf("-p ");
-	ft_printf("end\n");
+	if (s[0] == '.' && !s[1])
+		return (0);
+	if (s[0] == '.' && s[1] == '.')
+		return (0);
+	return (1);
 }
 
-static void	init_flags(t_flags *flags)
+void		print_name(char *s)
 {
-	flags->list_output = 0;
-	flags->recursive = 0;
-	flags->all_files = 0;
-	flags->reverse = 0;
-	flags->modif_data_sort = 0;
-	flags->one_file_per_line_output = 0;
-	flags->colored_output = 0;
-	flags->access_data_sort = 0;
-	flags->creation_data_sort = 0;
-	flags->all_files_without_self = 0;
-	flags->hide_owner = 0;
-	flags->one_line_output = 0;
-	flags->dir_with_slash = 0;
-	flags->size_sort = 0;
-	flags->converted_size = 0;
-	flags->full_time = 0;
-	flags->group_name_id = 0;
+	int i;
+	int len;
+
+	len = ft_strlen(s);
+	if (len > 1 && s[0] == '.' && s[1] == '/')
+		i = 1;
+	else
+		i = -1;
+	while (s[i + 1] == '/')
+		i++;
+	while (++i < (len - 1))
+		ft_printf("%c", s[i]);
+	ft_printf(":\n");
+}
+
+int			print_dir(char *name, t_flags flags)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+	struct stat		buf;
+	char			*curr;
+	t_queue			*queue;
+	int i;
+
+	if (!(dir = opendir(name)))
+	{
+		ft_printf("./ft_ls: No such file or directory\n");
+		return (1);
+	}
+	print_name(name);
+	queue = NULL;
+	i = -1;
+	while ((entry = readdir(dir)) != NULL)
+	{
+		curr = ft_strjoin(name, entry->d_name);
+		ft_printf("%s ", entry->d_name);
+//		ft_printf("%d-%s curr is %s", ++i, entry->d_name, curr);
+		stat(curr, &buf);
+		if (flags.recursive == 1 && S_ISDIR(buf.st_mode))
+			if (check_for_self(entry->d_name))
+			{
+//				ft_printf(" + added");
+				add_to_queue(&queue, curr);
+			}
+	}
+	ft_printf("\n");
+	ft_printf("\n");
+	while (queue)
+	{
+		char *new;
+		new = add_name(queue->name, 1);
+		print_dir(new, flags);
+//		ft_printf("%s ", (char*)(queue->content));
+//		print_dir((char*)(queue->content), flags);
+		queue = queue->next;
+	}
+	closedir(dir);
+	return (0);
 }
 
 int			main(int argc, char **argv)
 {
 	t_flags flags;
 	int		n;
-	DIR		*dir;
-	struct dirent *entry;
+	char	*name;
 
 	init_flags(&flags);
 	n = get_flags(argc, argv, &flags);
 	print_flags(flags);
-	dir = opendir(argv[1]);
-	while ((entry = readdir(dir)) != NULL)
-		ft_printf("%s\n", entry->d_name);
-	closedir(dir);
+	while (n < argc)
+	{
+		name = create_name_start(argv[n], 1);
+		ft_printf("%s\n", name);
+		print_dir(name, flags);
+		n++;
+	}
 	return (0);
 }

@@ -77,7 +77,7 @@ int			get_flags(int argc, char **argv, t_flags *flags)
 	if (argc == 1)
 		return (1);
 	i = 0;
-	while (i < (argc - 1) && argv[++i][0] == '-')
+	while (++i < argc && argv[i][0] == '-')
 	{
 		s = argv[i];
 		j = 0;
@@ -87,5 +87,5 @@ int			get_flags(int argc, char **argv, t_flags *flags)
 			else
 				error_options(s[j]);
 	}
-	return (0);
+	return (i);
 }

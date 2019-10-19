@@ -70,8 +70,26 @@ typedef struct		s_flags
 	char dir_with_slash; // -p
 }					t_flags;
 
+typedef struct		s_queue
+{
+	char			*name;
+	struct s_queue	*next;
+}					t_queue;
+
 void				print_flags(t_flags flags);
 int					get_flags(int argc, char **argv, t_flags *flags);
+
+char				*add_name(char *s, int isdir);
+char				*create_name(char *s, int isdir);
+
+void				init_flags(t_flags *flags);
+void				print_flags(t_flags flags);
+
+int					add_to_queue(t_queue **start, char *curr);
+
+char				*add_name(char *s, int isdir);
+char				*create_name_start(char *s, int isdir);
+
 
 /*
 typedef struct		s_data
