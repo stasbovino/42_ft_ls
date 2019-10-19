@@ -26,6 +26,12 @@ void		print_name(char *s)
 	ft_printf(":\n");
 }
 
+static int	error(char *s)
+{
+	ft_printf("./ft_ls: %s: %s\n", s, strerror(errno));
+	return (1);
+}
+
 int			print_dir(char *name, t_flags flags)
 {
 	DIR				*dir;
@@ -33,38 +39,26 @@ int			print_dir(char *name, t_flags flags)
 	struct stat		buf;
 	char			*curr;
 	t_queue			*queue;
-	int i;
+	char			*new;
 
 	if (!(dir = opendir(name)))
-	{
-		ft_printf("./ft_ls: No such file or directory\n");
-		return (1);
-	}
+		return (error(name));
 	print_name(name);
 	queue = NULL;
-	i = -1;
 	while ((entry = readdir(dir)) != NULL)
 	{
 		curr = ft_strjoin(name, entry->d_name);
 		ft_printf("%s ", entry->d_name);
-//		ft_printf("%d-%s curr is %s", ++i, entry->d_name, curr);
 		stat(curr, &buf);
 		if (flags.recursive == 1 && S_ISDIR(buf.st_mode))
 			if (check_for_self(entry->d_name))
-			{
-//				ft_printf(" + added");
 				add_to_queue(&queue, curr);
-			}
 	}
-	ft_printf("\n");
-	ft_printf("\n");
+	ft_printf("\n\n");
 	while (queue)
 	{
-		char *new;
 		new = add_name(queue->name, 1);
 		print_dir(new, flags);
-//		ft_printf("%s ", (char*)(queue->content));
-//		print_dir((char*)(queue->content), flags);
 		queue = queue->next;
 	}
 	closedir(dir);
@@ -83,7 +77,6 @@ int			main(int argc, char **argv)
 	while (n < argc)
 	{
 		name = create_name_start(argv[n], 1);
-		ft_printf("%s\n", name);
 		print_dir(name, flags);
 		n++;
 	}

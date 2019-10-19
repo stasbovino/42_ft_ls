@@ -2,6 +2,8 @@
 # define FT_LS_H
 
 # include "libft.h"
+# include <stdio.h>
+# include <errno.h>
 
 /*
 ** dir func
@@ -89,6 +91,7 @@ int					add_to_queue(t_queue **start, char *curr);
 
 char				*add_name(char *s, int isdir);
 char				*create_name_start(char *s, int isdir);
+
 
 
 /*
