@@ -6,7 +6,7 @@
 #    By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/02 17:48:56 by gwyman-m          #+#    #+#              #
-#    Updated: 2019/10/19 19:33:18 by gwyman-m         ###   ########.fr        #
+#    Updated: 2019/10/19 23:57:11 by sts              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,13 @@ VPATH := src
 
 RULE=$(firstword $(MAKECMDGOALS))
 
-all: $(NAME)
+all: subm $(NAME)
+
+subm:
+ifneq (`ls libft`, "")
+	git submodule init
+	git submodule update
+endif
 
 $(NAME): $(OBJ)
 	@make -C libft/
