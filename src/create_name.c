@@ -4,12 +4,10 @@ char	*add_name(char *s, int isdir)
 {
 	char	*ret;
 	int		len;
-	int		curr;
 
 	if (!s)
 		return (NULL);
 	len = ft_strlen(s);
-	curr = 0;
 	if (s[len - 1] == '/')
 		isdir = 0;
 	ret = ft_strdup(s);
@@ -28,10 +26,10 @@ char		*create_name_start(char *s, int isdir)
 {
 	char	*ret;
 	int		len;
-	int		curr;
 	int		special_case;
+	int		curr;
 
-	if (!s)
+	if (!s || !*s)
 		return (NULL);
 	len = ft_strlen(s);
 	curr = 0;

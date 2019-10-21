@@ -31,7 +31,7 @@ static int	error(char *s)
 	ft_printf("./ft_ls: %s: %s\n", s, strerror(errno));
 	return (1);
 }
-
+/*
 int			print_dir(char *name, t_flags flags)
 {
 	DIR				*dir;
@@ -65,19 +65,49 @@ int			print_dir(char *name, t_flags flags)
 	return (0);
 }
 
+*/
+
+int			print(char *s, t_flags flags, struct stat *buf)
+{
+	if (S_ISDIR(buf.st_mode))
+		print_dir();
+	else if (S_ISREG(buf.st_mode))
+		print_file();
+	else if (S_ISLNK(buf.st_mode))
+		print_link();
+	else if (S_ISCHR(buf.st_mode))
+		print_char();
+	else if (S_ISBLK(buf.st_mode))
+		print_block();
+	else if (S_ISFIFO(buf.st_mode))
+		print_fifo();
+	else if (S_ISSOCK(buf.st_mode))
+		print_socket();
+}
+
 int			main(int argc, char **argv)
 {
-	t_flags flags;
-	int		n;
-	char	*name;
+	t_flags		flags;
+	int			n;
+	char		*name;
+	struct stat	buf;
 
 	init_flags(&flags);
 	n = get_flags(argc, argv, &flags);
 	print_flags(flags);
+	if (argc == 1)
+	{
+		print_dir(); // .
+		return (0);
+	}
+	if (n < argc - 1)
+		flags.mult = 1;
+	else
+		flags.mult = 0;
 	while (n < argc)
 	{
-		name = create_name_start(argv[n], 1);
-		print_dir(name, flags);
+		stat(argv[n], &buf);
+		print(argc[n], flags, &buf);
 		n++;
 	}
 	return (0);

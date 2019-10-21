@@ -70,6 +70,8 @@ typedef struct		s_flags
 
 	char all_files_without_self; // -A
 	char dir_with_slash; // -p
+
+	char mult; // not one arg to print
 }					t_flags;
 
 typedef struct		s_queue
@@ -77,6 +79,13 @@ typedef struct		s_queue
 	char			*name;
 	struct s_queue	*next;
 }					t_queue;
+
+typedef struct		s_obj
+{
+	char			*name;
+	struct stat		buf;
+	struct s_obj	*next;
+}					t_obj;
 
 void				print_flags(t_flags flags);
 int					get_flags(int argc, char **argv, t_flags *flags);
