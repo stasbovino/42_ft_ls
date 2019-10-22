@@ -1,21 +1,5 @@
 #include "ft_ls.h"
 
-int			check_for_self(char *s)
-{
-	if (s[0] == '.' && !s[1])
-		return (0);
-	if (s[0] == '.' && s[1] == '.' && !s[2])
-		return (0);
-	return (1);
-}
-
-int			check_hidden(char *s)
-{
-	if (s[0] == '.')
-		return (0);
-	return (1);
-}
-
 void		print_name(char *s)
 {
 	int i;
@@ -33,18 +17,6 @@ void		print_name(char *s)
 	ft_printf(":\n");
 }
 
-int			error(char *s)
-{
-	ft_printf("./ft_ls: %s: %s\n", s, strerror(errno));
-	return (1);
-}
-
-int			malloc_error(void)
-{
-	ft_printf("./ft_ls: malloc error\n");
-	return (1);
-}
-
 int			sizeof_obj(t_obj *obj)
 {
 	int n;
@@ -58,6 +30,38 @@ int			sizeof_obj(t_obj *obj)
 	return (n);
 }
 
+int			print_objs(t_obj *obj, t_flags flags)
+{
+	int tab;
+	int newline;
+	int ret;
+
+	tab = 0;
+	newline = (flags.all_files == 1 || sizeof_obj(obj) > 2) ? 1 : 0;
+	ret = 0;
+	while (obj)
+	{
+		if (tab == 1)
+		{
+			tab--;
+			ft_printf(" ");
+		}
+		if ((((ret = check_for_self(obj->name_abs)) == 1)
+					|| (ret == 0 && flags.all_files == 1)))
+			if ((((ret = check_hidden(obj->name_abs)) == 1) ||
+						(ret == 0 && (flags.all_files == 1
+									  || flags.all_files_without_self == 1))))
+			{
+				print_file(obj->name_abs, flags, obj->buf);
+				tab++;
+			}
+		obj = obj->next;
+	}
+	if (newline == 1)
+		ft_printf("\n");
+	return (0);
+}
+
 int			print_dir(char *path, t_flags flags, struct stat buf)
 {
 	DIR				*dir;
@@ -65,8 +69,6 @@ int			print_dir(char *path, t_flags flags, struct stat buf)
 	t_obj			*obj;
 	t_obj			*tmp;
 	char			*new;
-	int				ret;
-	int				space;
 	static int		pr_n = 0;
 
 	(void)buf;
@@ -83,26 +85,7 @@ int			print_dir(char *path, t_flags flags, struct stat buf)
 		if ((add_to_objs(&obj, create_obj(path, *entry))))
 			return (1);
 	}
-	space = 0;
-	tmp = obj;
-	while (tmp)
-	{
-		if (space == 1)
-		{
-			space--;
-			ft_printf(" ");
-		}
-		if ((((ret = check_for_self(tmp->name_abs)) == 1) || (ret == 0 && flags.all_files == 1)))
-			if ((((ret = check_hidden(tmp->name_abs)) == 1) ||
-						(ret == 0 && (flags.all_files == 1 || flags.all_files_without_self == 1))))
-			{
-				print_file(tmp->name_abs, flags, tmp->buf);
-				space++;
-			}
-		tmp = tmp->next;
-	}
-	if (sizeof_obj(obj) > 2)
-		ft_printf("\n");
+	print_objs(obj, flags);
 	tmp = obj;
 	if (flags.recursive == 1)
 		while (tmp)
