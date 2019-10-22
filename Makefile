@@ -6,7 +6,7 @@
 #    By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/02 17:48:56 by gwyman-m          #+#    #+#              #
-#    Updated: 2019/10/19 23:57:11 by sts              ###   ########.fr        #
+#    Updated: 2019/10/22 15:47:59 by gwyman-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ RULE=$(firstword $(MAKECMDGOALS))
 all: subm $(NAME)
 
 subm:
-ifneq (`ls libft`, "")
+ifeq (`ls libft`, "")
 	git submodule init
 	git submodule update
 endif

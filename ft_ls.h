@@ -83,6 +83,7 @@ typedef struct		s_queue
 typedef struct		s_obj
 {
 	char			*name;
+	char			*name_abs;
 	struct stat		buf;
 	struct s_obj	*next;
 }					t_obj;
@@ -93,10 +94,18 @@ int					get_flags(int argc, char **argv, t_flags *flags);
 char				*add_name(char *s, int isdir);
 char				*create_name(char *s, int isdir);
 
+int					print(char *s, t_flags flags, struct stat buf);
+int					print_file(char *name, t_flags flags, struct stat buf);
+int					print_dir(char *path, t_flags flags, struct stat buf);
+
 void				init_flags(t_flags *flags);
 void				print_flags(t_flags flags);
 
-int					add_to_queue(t_queue **start, char *curr);
+int					error(char *s);
+int					malloc_error(void);
+
+int					add_to_objs(t_obj **obj, t_obj *new);
+t_obj				*create_obj(char *path, struct dirent data);
 
 char				*add_name(char *s, int isdir);
 char				*create_name_start(char *s, int isdir);

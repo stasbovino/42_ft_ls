@@ -4,7 +4,14 @@ int			check_for_self(char *s)
 {
 	if (s[0] == '.' && !s[1])
 		return (0);
-	if (s[0] == '.' && s[1] == '.')
+	if (s[0] == '.' && s[1] == '.' && !s[2])
+		return (0);
+	return (1);
+}
+
+int			check_hidden(char *s)
+{
+	if (s[0] == '.')
 		return (0);
 	return (1);
 }
@@ -26,54 +33,117 @@ void		print_name(char *s)
 	ft_printf(":\n");
 }
 
-static int	error(char *s)
+int			error(char *s)
 {
 	ft_printf("./ft_ls: %s: %s\n", s, strerror(errno));
 	return (1);
 }
-/*
-int			print_dir(char *name, t_flags flags)
+
+int			malloc_error(void)
+{
+	ft_printf("./ft_ls: malloc error\n");
+	return (1);
+}
+
+int			sizeof_obj(t_obj *obj)
+{
+	int n;
+
+	n = 0;
+	while (obj)
+	{
+		n++;
+		obj = obj->next;
+	}
+	return (n);
+}
+
+int			print_dir(char *path, t_flags flags, struct stat buf)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	struct stat		buf;
-	char			*curr;
-	t_queue			*queue;
+	t_obj			*obj;
+	t_obj			*tmp;
 	char			*new;
+	int				ret;
+	int				space;
+	static int		pr_n = 0;
 
-	if (!(dir = opendir(name)))
-		return (error(name));
-	print_name(name);
-	queue = NULL;
+	(void)buf;
+	obj = NULL;
+	if (!(dir = opendir(path)))
+		return (error(path));
+	if (pr_n >= 1)
+	{
+		print_name(path);
+	}
+	pr_n++;
 	while ((entry = readdir(dir)) != NULL)
 	{
-		curr = ft_strjoin(name, entry->d_name);
-		ft_printf("%s ", entry->d_name);
-		stat(curr, &buf);
-		if (flags.recursive == 1 && S_ISDIR(buf.st_mode))
-			if (check_for_self(entry->d_name))
-				add_to_queue(&queue, curr);
+		if ((add_to_objs(&obj, create_obj(path, *entry))))
+			return (1);
 	}
-	ft_printf("\n\n");
-	while (queue)
+	space = 0;
+	tmp = obj;
+	while (tmp)
 	{
-		new = add_name(queue->name, 1);
-		print_dir(new, flags);
-		queue = queue->next;
+		if (space == 1)
+		{
+			space--;
+			ft_printf(" ");
+		}
+		if ((((ret = check_for_self(tmp->name_abs)) == 1) || (ret == 0 && flags.all_files == 1)))
+			if ((((ret = check_hidden(tmp->name_abs)) == 1) ||
+						(ret == 0 && (flags.all_files == 1 || flags.all_files_without_self == 1))))
+			{
+				print_file(tmp->name_abs, flags, tmp->buf);
+				space++;
+			}
+		tmp = tmp->next;
 	}
+	if (sizeof_obj(obj) > 2)
+		ft_printf("\n");
+	tmp = obj;
+	if (flags.recursive == 1)
+		while (tmp)
+		{
+			if (S_ISDIR(tmp->buf.st_mode) && check_for_self(tmp->name_abs) == 1)
+			{
+				if (check_hidden(tmp->name_abs) == 0
+							&& flags.all_files == 0 && flags.all_files_without_self == 0)
+				{
+					tmp = tmp->next;
+					continue ;
+				}
+				ft_printf("\n");
+				if (!(new = add_name(tmp->name, 1)))
+					return (malloc_error());
+				print_dir(new, flags, tmp->buf);
+			}
+			tmp = tmp->next;
+		}
 	closedir(dir);
 	return (0);
 }
 
-*/
-
-int			print(char *s, t_flags flags, struct stat *buf)
+int			print_file(char *name, t_flags flags, struct stat buf)
 {
+	(void)flags;
+	(void)buf;
+	ft_printf("%s", name);
+	return (0);
+}
+
+int			print(char *s, t_flags flags, struct stat buf)
+{
+	int ret;
+
+	ret = 0;
 	if (S_ISDIR(buf.st_mode))
-		print_dir();
+		ret = print_dir(s, flags, buf);
 	else if (S_ISREG(buf.st_mode))
-		print_file();
-	else if (S_ISLNK(buf.st_mode))
+		ret = print_file(s, flags, buf); 
+/*	else if (S_ISLNK(buf.st_mode))
 		print_link();
 	else if (S_ISCHR(buf.st_mode))
 		print_char();
@@ -82,7 +152,8 @@ int			print(char *s, t_flags flags, struct stat *buf)
 	else if (S_ISFIFO(buf.st_mode))
 		print_fifo();
 	else if (S_ISSOCK(buf.st_mode))
-		print_socket();
+		print_socket();*/
+	return (ret);
 }
 
 int			main(int argc, char **argv)
@@ -94,10 +165,12 @@ int			main(int argc, char **argv)
 
 	init_flags(&flags);
 	n = get_flags(argc, argv, &flags);
-	print_flags(flags);
-	if (argc == 1)
+//	print_flags(flags);
+	if (n - argc == 0)
 	{
-		print_dir(); // .
+		name = create_name_start(".", 1);
+		stat(name, &buf);
+		print_dir(name, flags, buf); // .
 		return (0);
 	}
 	if (n < argc - 1)
@@ -107,7 +180,11 @@ int			main(int argc, char **argv)
 	while (n < argc)
 	{
 		stat(argv[n], &buf);
-		print(argc[n], flags, &buf);
+		if (S_ISDIR(buf.st_mode))
+			name = create_name_start(argv[n], 1);
+		else
+			name = create_name_start(argv[n], 0);
+		print(name, flags, buf);
 		n++;
 	}
 	return (0);
