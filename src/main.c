@@ -62,13 +62,35 @@ int			print_objs(t_obj *obj, t_flags flags)
 	return (0);
 }
 
+int			recursive_dir(t_obj *obj, t_flags flags)
+{
+	char *new;
+
+	while (obj)
+		{
+			if (S_ISDIR(obj->buf.st_mode) && check_for_self(obj->name_abs) == 1)
+			{
+				if (check_hidden(obj->name_abs) == 0 && flags.all_files == 0
+						&& flags.all_files_without_self == 0)
+				{
+					obj = obj->next;
+					continue ;
+				}
+				ft_printf("\n");
+				if (!(new = add_name(obj->name, 1)))
+					return (malloc_error());
+				print_dir(new, flags, obj->buf);
+			}
+			obj = obj->next;
+		}
+	return (0);
+}
+
 int			print_dir(char *path, t_flags flags, struct stat buf)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	t_obj			*obj;
-	t_obj			*tmp;
-	char			*new;
 	static int		pr_n = 0;
 
 	(void)buf;
@@ -76,35 +98,14 @@ int			print_dir(char *path, t_flags flags, struct stat buf)
 	if (!(dir = opendir(path)))
 		return (error(path));
 	if (pr_n >= 1)
-	{
 		print_name(path);
-	}
 	pr_n++;
 	while ((entry = readdir(dir)) != NULL)
-	{
 		if ((add_to_objs(&obj, create_obj(path, *entry))))
 			return (1);
-	}
 	print_objs(obj, flags);
-	tmp = obj;
 	if (flags.recursive == 1)
-		while (tmp)
-		{
-			if (S_ISDIR(tmp->buf.st_mode) && check_for_self(tmp->name_abs) == 1)
-			{
-				if (check_hidden(tmp->name_abs) == 0
-							&& flags.all_files == 0 && flags.all_files_without_self == 0)
-				{
-					tmp = tmp->next;
-					continue ;
-				}
-				ft_printf("\n");
-				if (!(new = add_name(tmp->name, 1)))
-					return (malloc_error());
-				print_dir(new, flags, tmp->buf);
-			}
-			tmp = tmp->next;
-		}
+		recursive_dir(obj, flags);
 	closedir(dir);
 	return (0);
 }
