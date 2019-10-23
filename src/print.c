@@ -31,6 +31,8 @@ int			print_objs(t_obj *obj, t_flags flags)
 	tab = 0;
 	newline = (flags.all_files == 1 || sizeof_obj(obj) > 2) ? 1 : 0;
 	ret = 0;
+	if (flags.creation_data_sort == 0)
+		sort_obj(obj, flags);
 	while (obj)
 	{
 		if (tab == 1)

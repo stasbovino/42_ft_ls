@@ -21,7 +21,7 @@ LIB = -L libft/ -lft
 HEADER = ft_ls.h
 
 CFILES= main.c get_flags.c create_name.c obj.c init_flags.c check.c error.c \
-		print.c
+		print.c sort.c time.c
 
 SRC = $(addprefix $(SRC_DIR),$(CFILES))
 
