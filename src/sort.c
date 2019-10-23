@@ -84,14 +84,14 @@ t_obj	*obj_sort_ascii(t_obj *obj)
 	return (obj);
 }
 
-int	sort_obj(t_obj *obj, t_flags flags)
+int	sort_obj(t_obj **obj, t_flags flags)
 {        
-	//obj = obj_sort_ascii(obj); 
+	*obj = obj_sort_ascii(*obj); 
 	if (flags.size_sort == 1)
-		obj = obj_sort_size(obj);
+		*obj = obj_sort_size(*obj);
 	if (flags.modif_data_sort == 1)
-		obj = obj_sort_time(obj);
+		*obj = obj_sort_time(*obj);
 	if (flags.reverse == 1)
-		obj = obj_reverse(obj);
+		*obj = obj_reverse(*obj);
 	return (1);
 }

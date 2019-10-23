@@ -121,7 +121,7 @@ t_obj				*create_obj(char *path, struct dirent data);
 char				*add_name(char *s, int isdir);
 char				*create_name_start(char *s, int isdir);
 
-int				sort_obj(t_obj *obj, t_flags flags);
+int				sort_obj(t_obj **obj, t_flags flags);
 
 /*
 typedef struct		s_data
