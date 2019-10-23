@@ -1,6 +1,7 @@
 #ifndef FT_LS_H
 # define FT_LS_H
 
+#include <sys/ioctl.h>
 # include "libft.h"
 # include <stdio.h>
 # include <errno.h>

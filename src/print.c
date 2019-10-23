@@ -1,11 +1,33 @@
 #include "ft_ls.h"
 
+int			get_terminal_width(void)
+{
+	struct winsize s;
+
+	ioctl(1, TIOCGWINSZ, &s);
+	return (s.ws_col);
+}
+
+void		init_separ(char *separ, t_flags flags)
+{
+	char c;
+
+	c = '\t';
+	if (flags.one_file_per_line_output == 1 || flags.list_output == 1)
+		c = '\n';
+	if (flags.one_line_output == 1)
+		c = ',';
+	*separ = c;
+}
+
 int			print_objs(t_obj *obj, t_flags flags)
 {
 	int tab;
 	int newline;
 	int ret;
+	char separ;
 
+	init_separ(&separ, flags);
 	tab = 0;
 	newline = (flags.all_files == 1 || sizeof_obj(obj) > 2) ? 1 : 0;
 	ret = 0;
@@ -14,7 +36,9 @@ int			print_objs(t_obj *obj, t_flags flags)
 		if (tab == 1)
 		{
 			tab--;
-			ft_printf(" ");
+			ft_printf("%c", separ);
+			if (separ == ',')
+				ft_printf(" ");
 		}
 		if ((((ret = check_for_self(obj->name_abs)) == 1)
 					|| (ret == 0 && flags.all_files == 1)))
@@ -56,11 +80,20 @@ int			print_dir(char *path, t_flags flags, struct stat buf)
 	return (0);
 }
 
-int			print_file(char *name, t_flags flags, struct stat buf)
+int			print_list_format(char *name, t_flags flags, struct stat buf)
 {
 	(void)flags;
 	(void)buf;
-	ft_printf("%s", name);
+	ft_printf("%s %d %s %s %d %s %s", "-rw-rw-r--", 1, "sts", "sts", 0, "окт 23 20:02", name);
+	return (0);
+}
+
+int			print_file(char *name, t_flags flags, struct stat buf)
+{
+	if (flags.list_output == 1)
+		print_list_format(name, flags, buf);
+	else
+		ft_printf("%s", name);
 	return (0);
 }
 
