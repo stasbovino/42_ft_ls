@@ -36,21 +36,21 @@ t_obj	*obj_sort_time(t_obj *obj)
 		return (NULL);
 	if (obj->next && (obj->buf.st_mtime < obj->next->buf.st_mtime))
 		obj = obj_swap(obj, obj->next);
-	//else if (obj->next && (obj->buf.st_mtime == obj->next->buf.st_mtime))
-	//	if (obj->next && (obj->buf.st_mtime.tv_nsec < obj->next->buf.st_mtime.tv_nsec))
-	//		obj = obj_swap(obj, obj->next); 
+	else if (obj->next && (obj->buf.st_mtime == obj->next->buf.st_mtime))
+		if (obj->next && (obj->buf.st_mtim.tv_nsec < obj->next->buf.st_mtim.tv_nsec))
+			obj = obj_swap(obj, obj->next); 
 	obj->next = obj_sort_time(obj->next);
 	if (obj->next && (obj->buf.st_mtime < obj->next->buf.st_mtime))
 	{
 		obj = obj_swap(obj, obj->next);
 		obj->next = obj_sort_time(obj->next);
 	}
-	//else if (obj->next && (obj->buf->st_mtime == obj->next->buf->st_mtime))
-	//	if (obj->next && (obj->buf->st_mtime.tv_nsec < obj->next->buf->st_mtime.tv_nsec))
-	//	{
-	//		obj = obj_swap(obj, obj->next);
-	//		obj->next = obj_sort_time(obj->next);
-	//	}
+	else if (obj->next && (obj->buf.st_mtime == obj->next->buf.st_mtime))
+		if (obj->next && (obj->buf.st_mtim.tv_nsec < obj->next->buf.st_mtim.tv_nsec))
+		{
+			obj = obj_swap(obj, obj->next);
+	        	obj->next = obj_sort_time(obj->next);
+	        }
 	return (obj);
 }
 
