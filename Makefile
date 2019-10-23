@@ -6,7 +6,7 @@
 #    By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/02 17:48:56 by gwyman-m          #+#    #+#              #
-#    Updated: 2019/10/22 23:32:53 by sts              ###   ########.fr        #
+#    Updated: 2019/10/23 17:10:29 by sts              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ LIB = -L libft/ -lft
 
 HEADER = ft_ls.h
 
-CFILES= main.c get_flags.c create_name.c obj.c init_flags.c check.c error.c
+CFILES= main.c get_flags.c create_name.c obj.c init_flags.c check.c error.c \
+		print.c
 
 SRC = $(addprefix $(SRC_DIR),$(CFILES))
 

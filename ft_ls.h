@@ -88,8 +88,16 @@ typedef struct		s_obj
 	struct s_obj	*next;
 }					t_obj;
 
+int					print_obj(t_obj *obj, t_flags flags);
+int					print_dir(char *path, t_flags flags, struct stat buf);
+int					print_file(char *name, t_flags flags, struct stat buf);
+int					print(char *s, t_flags flags, struct stat buf);
+void				print_name(char *s);
 void				print_flags(t_flags flags);
 int					get_flags(int argc, char **argv, t_flags *flags);
+
+int					sizeof_obj(t_obj *obj);
+int					recursive_dir(t_obj *obj, t_flags flags);
 
 char				*add_name(char *s, int isdir);
 char				*create_name(char *s, int isdir);
