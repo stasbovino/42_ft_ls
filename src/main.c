@@ -1,79 +1,121 @@
 #include "ft_ls.h"
 
-void		error(char *s)
+char	*add_name(char *s, int isdir)
 {
-	ft_printf("./ft_ls: %s: %s\n", s, strerror(errno));
+	char	*ret;
+	int		len;
+
+	if (!s)
+		return (NULL);
+	len = ft_strlen(s);
+	if (s[len - 1] == '/')
+		isdir = 0;
+	ret = ft_strdup(s);
+	if (ret == NULL)
+		return (NULL);
+	if (isdir == 1)
+	{
+		ret = ft_strjoin(ret, "/");
+		if (ret == NULL)
+			return (NULL);
+	}
+	return (ret);
 }
 
-int			malloc_error(int check)
+int			check_for_self(char *s)
 {
-	static int n = 0;
-
-	if (check == 1)
-	{
-		if (n == 1)
-			return (1);
-		else
-			return (0);
-	}
-	ft_pritnf("malloc error\n");
-	n++;
+	if (s[0] == '.' && !s[1])
+		return (0);
+	if (s[0] == '.' && s[1] == '.' && !s[2])
+		return (0);
 	return (1);
 }
 
-static void *free_names(char *name, char *full_name, int error)
+void		print_objs(t_obj *obj, t_flags flags)
 {
-	if (error == 1)
-		malloc_error(0);
-	else if (error == 0)
-		error(full_name);
-	if (name)
-		free(name);
-	if (full_name)
-		free(full_name);
-	return (NULL);
+	while (obj)
+	{
+		if (obj->name[0] == '.' && flags.all_files == 0)
+		{
+			obj = obj->next;
+			continue;
+		}
+		ft_printf("%s %s\n", obj->name, obj->full_name);
+		obj = obj->next;
+	}
+	ft_printf("\n");
 }
 
-t_obj		*create_obj(char *name, char *full_name)
+int			print_file(t_obj *list, t_flags flags)
 {
-	t_obj		*new;
-
-	if (!name || !full_name)
-		return (free_names(name, full_name, 1));
-	if (!(new = (t_obj*)malloc(sizeof(t_obj))))
-		return (free_names(name, full_name, 1));
-	if (lstat(full_name, new->buf) == -1)
-	{
-		free(new);
-		return (free_names(name, full_name, 0));
-	}
-	new->name = name;
-	new->full_name = full_name;
-	new->next = NULL;
-	return (new);
+	(void)flags;
+	ft_printf("%s\n", list->name);
+	return (1);
 }
 
-int			*add_obj(t_obj **dst, t_obj *new)
+int			recursive_dir(t_obj *obj, t_flags flags)
 {
-	if (!new)
+	while (obj)
 	{
-		if (malloc_error(1) == 1)
+		if (S_ISDIR(obj->buf.st_mode) && check_for_self(obj->name) == 1)
+		{
+			if (obj->name[0] == '.' && flags.all_files == 0)
+			{
+				obj = obj->next;
+				continue ;
+			}
+			ft_printf("\n");
+			print_dir(obj, flags);
+		}
+		obj = obj->next;
 	}
+	return (0);
 }
 
-t_obj		*get_args(int argc, char **argv, int n)
+int			error_dir(char *name)
 {
-	t_obj *list;
+	ft_printf("./ft_ls: %s dir cannot be open\n", name);
+	return (1);
+}
 
-	if (n == argc)
+int			print_dir(t_obj *list, t_flags flags)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+	t_obj			*obj;
+	static int		pr_n = 0;
+	char			*new_path;
+
+	obj = NULL;
+	if (!(dir = opendir(list->full_name)))
+		return (error_dir(list->full_name));
+	if (pr_n >= 1)
+		print_file(list, flags);
+	pr_n++;
+	while ((entry = readdir(dir)) != NULL)
 	{
+		new_path = ft_strjoin(add_name(list->full_name, 1), entry->d_name);
+		if (!(add_obj(&obj, create_obj(entry->d_name, new_path))))
+			return (1);
 	}
-	else if (n == argc - 1)
+	print_objs(obj, flags);
+	if (flags.recursive == 1)
+		recursive_dir(obj, flags);
+	closedir(dir);
+	return (0);
+}
+
+int			print(t_obj *list, t_flags flags)
+{
+	while (list)
 	{
+		if (S_ISDIR(list->buf.st_mode))
+			print_dir(list, flags);
+		else
+			print_file(list, flags);
+		list = list->next;
 	}
-	else
-	{
-	}
+	return (0);
 }
 
 int			main(int argc, char **argv)
@@ -84,5 +126,11 @@ int			main(int argc, char **argv)
 
 	init_flags(&flags);
 	n = get_flags(argc, argv, &flags);
-	list = get_args(argc, argv, n);
+	if (!(list = get_args(argc, argv, n)))
+		return (1);
+	print_flags(flags);
+	print_args(list);
+	//sort_obj(&list, flags);
+	print(list, flags);
+	return (0);
 }

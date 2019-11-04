@@ -68,5 +68,22 @@ typedef struct		s_obj
 
 void				init_flags(t_flags *flags);
 void				print_flags(t_flags flags);
+int					get_flags(int argc, char **argv, t_flags *flags);
+
+t_obj				*create_obj(char *name, char *full_name);
+void				*free_obj(t_obj *src);
+void				*add_obj(t_obj **dst, t_obj *new);
+
+t_obj				*get_args(int argc, char **argv, int n);
+void				print_args(t_obj *kek);
+
+void				error_stat(char *s);
+int					malloc_error(int check);
+
+int					sort_obj(t_obj **obj, t_flags flags);
+
+int					print_dir(t_obj *obj, t_flags flags);
+int					print_file(t_obj *list, t_flags flags);
+int					recursive_dir(t_obj *obj, t_flags flags);
 
 #endif
