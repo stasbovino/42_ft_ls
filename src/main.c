@@ -1,72 +1,88 @@
 #include "ft_ls.h"
 
-int			sizeof_obj(t_obj *obj)
+void		error(char *s)
 {
-	int n;
-
-	n = 0;
-	while (obj)
-	{
-		n++;
-		obj = obj->next;
-	}
-	return (n);
+	ft_printf("./ft_ls: %s: %s\n", s, strerror(errno));
 }
 
-int			recursive_dir(t_obj *obj, t_flags flags)
+int			malloc_error(int check)
 {
-	char *new;
+	static int n = 0;
 
-	while (obj)
-		{
-			if (S_ISDIR(obj->buf.st_mode) && check_for_self(obj->name_abs) == 1)
-			{
-				if (check_hidden(obj->name_abs) == 0 && flags.all_files == 0
-						&& flags.all_files_without_self == 0)
-				{
-					obj = obj->next;
-					continue ;
-				}
-				ft_printf("\n");
-				if (!(new = add_name(obj->name, 1)))
-					return (malloc_error());
-				print_dir(new, flags, obj->buf);
-			}
-			obj = obj->next;
-		}
-	return (0);
+	if (check == 1)
+	{
+		if (n == 1)
+			return (1);
+		else
+			return (0);
+	}
+	ft_pritnf("malloc error\n");
+	n++;
+	return (1);
+}
+
+static void *free_names(char *name, char *full_name, int error)
+{
+	if (error == 1)
+		malloc_error(0);
+	else if (error == 0)
+		error(full_name);
+	if (name)
+		free(name);
+	if (full_name)
+		free(full_name);
+	return (NULL);
+}
+
+t_obj		*create_obj(char *name, char *full_name)
+{
+	t_obj		*new;
+
+	if (!name || !full_name)
+		return (free_names(name, full_name, 1));
+	if (!(new = (t_obj*)malloc(sizeof(t_obj))))
+		return (free_names(name, full_name, 1));
+	if (lstat(full_name, new->buf) == -1)
+	{
+		free(new);
+		return (free_names(name, full_name, 0));
+	}
+	new->name = name;
+	new->full_name = full_name;
+	new->next = NULL;
+	return (new);
+}
+
+int			*add_obj(t_obj **dst, t_obj *new)
+{
+	if (!new)
+	{
+		if (malloc_error(1) == 1)
+	}
+}
+
+t_obj		*get_args(int argc, char **argv, int n)
+{
+	t_obj *list;
+
+	if (n == argc)
+	{
+	}
+	else if (n == argc - 1)
+	{
+	}
+	else
+	{
+	}
 }
 
 int			main(int argc, char **argv)
 {
 	t_flags		flags;
 	int			n;
-	char		*name;
-	struct stat	buf;
+	t_obj		*list;
 
 	init_flags(&flags);
 	n = get_flags(argc, argv, &flags);
-//	print_flags(flags);
-	if (n - argc == 0)
-	{
-		name = create_name_start(".", 1);
-		stat(name, &buf);
-		print_dir(name, flags, buf); // .
-		return (0);
-	}
-	if (n < argc - 1)
-		flags.mult = 1;
-	else
-		flags.mult = 0;
-	while (n < argc)
-	{
-		stat(argv[n], &buf);
-		if (S_ISDIR(buf.st_mode))
-			name = create_name_start(argv[n], 1);
-		else
-			name = create_name_start(argv[n], 0);
-		print(name, flags, buf);
-		n++;
-	}
-	return (0);
+	list = get_args(argc, argv, n);
 }
