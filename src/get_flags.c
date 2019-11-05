@@ -17,7 +17,7 @@ static void	add_flag(t_flags *flags, char f)
 static void	error_options(char f)
 {
 	ft_printf("./ft_ls: illegal options -- %c\n", f);
-	ft_printf("usage: ./ft_ls [-lRartG1mUuSAgphT] [file ...]\n");
+	ft_printf("usage: ./ft_ls [-lRart] [file ...]\n");
 	exit(1);
 }
 

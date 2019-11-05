@@ -1,11 +1,9 @@
 #include "ft_ls.h"
 
-static void *free_names(char *name, char *full_name, int error)
+static void *free_names(char *name, char *full_name)
 {
-	if (error == 1)
-		malloc_error(0);
-	else if (error == 0)
-		error_stat(name);
+	if (errno)
+		error(name);
 	if (name)
 		free(name);
 	if (full_name)
@@ -18,36 +16,46 @@ t_obj		*create_obj(char *name, char *full_name)
 	t_obj		*new;
 
 	if (!name || !full_name)
-		return (free_names(name, full_name, 1));
+		return (free_names(name, full_name));
 	if (!(new = (t_obj*)malloc(sizeof(t_obj))))
-		return (free_names(name, full_name, 1));
+		return (free_names(name, full_name));
 	if (lstat(full_name, &new->buf) == -1)
 	{
 		free(new);
-		return (free_names(name, full_name, 0));
+		return (free_names(name, full_name));
 	}
-	new->name = name;
-	new->full_name = full_name;
+	if (!(new->name = ft_strdup(name)))
+	{
+		free(new);
+		return (free_names(name, full_name));
+	}
+	if (!(new->full_name = ft_strdup(full_name)))
+	{
+		free(new);
+		return (free_names(name, full_name));
+	}
 	new->next = NULL;
 	return (new);
 }
 
-void		*free_obj(t_obj *srt)
+void		*free_obj(t_obj *lst)
 {
 	t_obj *tmp;
 
-	while (srt)
+	while (lst)
 	{
-		tmp = srt->next;
-		free(srt);
-		srt = tmp;
+		tmp = lst->next;
+		free(lst->name);
+		free(lst->full_name);
+		free(lst);
+		lst = tmp;
 	}
 	return (NULL);
 }
 
 void		*add_obj(t_obj **dst, t_obj *new)
 {
-	if (!new && malloc_error(1) == 1)
+	if (!new && errno == 12)
 		return (free_obj(*dst));
 	if (!new)
 		return (dst);

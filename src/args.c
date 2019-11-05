@@ -3,19 +3,28 @@
 t_obj		*get_args(int argc, char **argv, int n)
 {
 	t_obj *list;
+	char	*s;
 
 	list = NULL;
 	if (n == argc)
 	{
-		if (!(add_obj(&list, create_obj(ft_strdup("."), ft_strdup("./.")))))
+		if (!(add_obj(&list, create_obj(".", "./."))))
 			return (NULL);
 	}
 	else
 		while (n < argc)
 		{
-			if (!(add_obj(&list, create_obj(ft_strdup(argv[n]),
-						ft_strjoin("./", argv[n])))))
+			s = NULL;
+			if (argv[n][0] == '/')
+			{
+				if (!(add_obj(&list, create_obj(argv[n], argv[n]))))
+					return (NULL);
+			}
+			else if (!(add_obj(&list, create_obj(argv[n],
+								s = ft_strjoin("./", argv[n])))))
 				return (NULL);
+			if (s)
+				free(s);
 			n++;
 		}
 	return (list);

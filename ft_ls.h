@@ -52,19 +52,28 @@ typedef struct		s_flags
 	char modif_data_sort; // -t
 }					t_flags;
 
-typedef struct		s_queue
-{
-	char			*name;
-	struct s_queue	*next;
-}					t_queue;
-
 typedef struct		s_obj
 {
 	char			*name;
 	char			*full_name;
 	struct stat		buf;
 	struct s_obj	*next;
+	char			type;
+	struct passwd	*usr;
+	struct group	*grp;
+	int				major;
+	int				minor;
 }					t_obj;
+
+typedef struct		s_format
+{
+	int				links;
+	int				owner;
+	int				group;
+	int				size;
+	int				size_minor;
+	int				size_major;
+}					t_format;
 
 void				init_flags(t_flags *flags);
 void				print_flags(t_flags flags);
@@ -77,13 +86,21 @@ void				*add_obj(t_obj **dst, t_obj *new);
 t_obj				*get_args(int argc, char **argv, int n);
 void				print_args(t_obj *kek);
 
-void				error_stat(char *s);
-int					malloc_error(int check);
+void				error(char *s);
 
 int					sort_obj(t_obj **obj, t_flags flags);
 
 int					print_dir(t_obj *obj, t_flags flags);
 int					print_file(t_obj *list, t_flags flags);
 int					recursive_dir(t_obj *obj, t_flags flags);
+int					print(t_obj *list, t_flags flags);
+
+void				formatting(t_obj *obj, t_flags flags);
+char				define_type(t_obj *obj);
+void				print_list(t_obj *obj, t_format format);
+void				print_objs(t_obj *obj, t_flags flags);
+
+int					check_for_self(char *s);
+char				*add_name(char *s, int isdir);
 
 #endif
