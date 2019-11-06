@@ -5,10 +5,22 @@ void		display_time(struct stat buf)
 {
 	time_t	today;
 	char	*s;
+	time_t	six;
 
+	six = (time_t)15638400;
 	time(&today);
-	s = ctime(&(buf.st_mtime)) + 4;
-	ft_printf("%.12s ", s);
+	if ((buf.st_mtime - today) >= six || (today - buf.st_mtime)  >= six)
+	{
+		s = ctime(&(buf.st_mtime)) + 4;
+		ft_printf("%.7s ", s);
+		s = ctime(&(buf.st_mtime)) + 20;
+		ft_printf("%.4s ", s);
+	}
+	else
+	{
+		s = ctime(&(buf.st_mtime)) + 4;
+		ft_printf("%.12s ", s);
+	}
 }
 
 void		create_rights(char type, t_obj *obj, char s[12])
