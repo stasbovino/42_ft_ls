@@ -61,6 +61,7 @@ int			print_dir(t_obj *list, t_flags flags)
 	}
 	if (errno)
 		error(NULL);
+	sort_obj(&obj, flags);
 	print_objs(obj, flags);
 //	sleep(1);
 	if (flags.recursive == 1)

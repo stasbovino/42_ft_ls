@@ -43,7 +43,6 @@ int			main(int argc, char **argv)
 		return (1);
 //	print_flags(flags);
 //	print_args(list);
-	//sort_obj(&list, flags);
 	if (print(list, flags))
 		return (1);
 	free_obj(list);

@@ -52,10 +52,10 @@ void		set_obj(t_obj *obj)
 		error(obj->name);
 	if (obj->type == 'c' || obj->type == 'b')
 	{
-		obj->major = major(obj->buf.st_size);
+       // 	obj->major = major(obj->buf.st_size);
 		if (errno)
 			error(obj->name);
-		obj->minor = minor(obj->buf.st_rdev);
+	 //       obj->minor = minor(obj->buf.st_rdev);
 		if (errno)
 			error(obj->name);
 	}

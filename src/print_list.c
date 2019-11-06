@@ -1,5 +1,15 @@
 #include "ft_ls.h"
 
+void		display_time(struct stat buf)
+{
+	time_t	today;
+	char	*s;
+
+	time(&today);
+	s = ctime(&(buf.st_mtime)) + 4;
+	ft_printf(" %.12s ", s);
+}
+
 void		create_rights(char type, t_obj *obj, char s[12])
 {
 	s[0] = type;
@@ -46,7 +56,7 @@ char		define_type(t_obj *obj)
 	return (0);
 }
 
-void		print_link_content(t_obj *obj)
+int		print_link_content(t_obj *obj)
 {
 	char *content;
 	size_t size;
@@ -56,6 +66,7 @@ void		print_link_content(t_obj *obj)
 	content = ft_strnew(size);
 	ret = readlink(obj->full_name, content, size);
 	ft_printf("-> %s", content);
+	return (ret);
 }
 
 void		print_list(t_obj *obj, t_format format)
@@ -75,7 +86,8 @@ void		print_list(t_obj *obj, t_format format)
 			ft_printf("%*d, %*d ", format.size_major, obj->major, format.size_minor, obj->minor);
 		else
 			ft_printf("%*d ", format.size, obj->buf.st_size);
-		ft_printf("Oct 42 21:00 ");
+		display_time(obj->buf);
+		//ft_printf("Oct 42 21:00 ");
 		ft_printf("%s ", obj->name);
 		if (type == 'l')
 			print_link_content(obj);
