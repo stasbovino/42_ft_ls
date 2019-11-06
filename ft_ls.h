@@ -59,8 +59,8 @@ typedef struct		s_obj
 	struct stat		buf;
 	struct s_obj	*next;
 	char			type;
-	struct passwd	*usr;
-	struct group	*grp;
+	char			*owner;
+	char			*group;
 	int				major;
 	int				minor;
 }					t_obj;
@@ -73,6 +73,7 @@ typedef struct		s_format
 	int				size;
 	int				size_minor;
 	int				size_major;
+	int				blocks;
 }					t_format;
 
 void				init_flags(t_flags *flags);
@@ -86,14 +87,14 @@ void				*add_obj(t_obj **dst, t_obj *new);
 t_obj				*get_args(int argc, char **argv, int n);
 void				print_args(t_obj *kek);
 
-void				error(char *s);
+void				print_error(char *s);
 
 int					sort_obj(t_obj **obj, t_flags flags);
 
-int					print_dir(t_obj *obj, t_flags flags);
+int					print_dir(t_obj *obj, t_flags flags, int printname);
 int					print_file(t_obj *list, t_flags flags);
 int					recursive_dir(t_obj *obj, t_flags flags);
-int					print(t_obj *list, t_flags flags);
+int					print(t_obj *list, t_flags flags, int count);
 
 void				formatting(t_obj *obj, t_flags flags);
 char				define_type(t_obj *obj);

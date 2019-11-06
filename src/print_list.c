@@ -1,4 +1,5 @@
 #include "ft_ls.h"
+#include <stdio.h>
 
 void		display_time(struct stat buf)
 {
@@ -7,7 +8,7 @@ void		display_time(struct stat buf)
 
 	time(&today);
 	s = ctime(&(buf.st_mtime)) + 4;
-	ft_printf(" %.12s ", s);
+	ft_printf("%.12s ", s);
 }
 
 void		create_rights(char type, t_obj *obj, char s[12])
@@ -56,7 +57,7 @@ char		define_type(t_obj *obj)
 	return (0);
 }
 
-int		print_link_content(t_obj *obj)
+int			print_link_content(t_obj *obj)
 {
 	char *content;
 	size_t size;
@@ -65,7 +66,8 @@ int		print_link_content(t_obj *obj)
 	size = 256;
 	content = ft_strnew(size);
 	ret = readlink(obj->full_name, content, size);
-	ft_printf("-> %s", content);
+	ft_printf(" -> %s", content);
+	free(content);
 	return (ret);
 }
 
@@ -74,21 +76,23 @@ void		print_list(t_obj *obj, t_format format)
 	char type;
 	char s[12];
 
+	if (!obj)
+		return ;
+	ft_printf("total %d\n", format.blocks);
 	while (obj)
 	{
 		type = obj->type;
 		create_rights(type, obj, s);
-		ft_printf("%-12s", s);
+		ft_printf("%-11s ", s);
 		ft_printf("%*d ", format.links, obj->buf.st_nlink);
-		ft_printf("%-*s  ", format.owner, obj->usr->pw_name);
-		ft_printf("%-*s ", format.group, obj->grp->gr_name);
+		ft_printf("%-*s  ", format.owner, obj->owner);
+		ft_printf("%-*s  ", format.group, obj->group);
 		if (type == 'c' || type == 'b')
-			ft_printf("%*d, %*d ", format.size_major, obj->major, format.size_minor, obj->minor);
+			ft_printf("%3d, %3d ", obj->major, obj->minor);
 		else
 			ft_printf("%*d ", format.size, obj->buf.st_size);
 		display_time(obj->buf);
-		//ft_printf("Oct 42 21:00 ");
-		ft_printf("%s ", obj->name);
+		ft_printf("%s", obj->name);
 		if (type == 'l')
 			print_link_content(obj);
 		ft_printf("\n");

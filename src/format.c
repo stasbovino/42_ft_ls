@@ -10,9 +10,9 @@ void		compare(t_obj *obj, t_flags flags, t_format *format)
 	type = obj->type;
 	if ((len = ft_numlen(obj->buf.st_nlink)) > format->links)
 		format->links = len;
-	if ((len = ft_strlen(obj->usr->pw_name)) > format->owner)
+	if ((len = ft_strlen(obj->owner)) > format->owner)
 		format->owner = len;
-	if ((len = ft_strlen(obj->grp->gr_name)) > format->group)
+	if ((len = ft_strlen(obj->group)) > format->group)
 		format->group = len;
 	if (type == 'c' || type == 'b')
 	{
@@ -29,6 +29,7 @@ void		compare(t_obj *obj, t_flags flags, t_format *format)
 	}
 	else if ((len = ft_numlen(obj->buf.st_size)) > format->size)
 		format->size = len;
+	format->blocks += obj->buf.st_blocks;
 }
 
 void		init_format(t_format *format)
@@ -39,25 +40,31 @@ void		init_format(t_format *format)
 	format->size = 0;
 	format->size_minor = 0;
 	format->size_major = 0;
+	format->blocks = 0;
 }
 
 void		set_obj(t_obj *obj)
 {
+	struct passwd	*ow;
+	struct group	*gr;
+
 	obj->type = define_type(obj);
-	obj->usr = getpwuid(obj->buf.st_uid);
+	ow = getpwuid(obj->buf.st_uid);
 	if (errno)
-		error(obj->name);
-	obj->grp = getgrgid(obj->buf.st_gid);
+		print_error(obj->full_name);
+	obj->owner = ft_strdup(ow->pw_name);
+	gr = getgrgid(obj->buf.st_gid);
 	if (errno)
-		error(obj->name);
+		print_error(obj->full_name);
+	obj->group = ft_strdup(gr->gr_name);
 	if (obj->type == 'c' || obj->type == 'b')
 	{
-       // 	obj->major = major(obj->buf.st_size);
+		obj->major = major(obj->buf.st_rdev);
 		if (errno)
-			error(obj->name);
-	 //       obj->minor = minor(obj->buf.st_rdev);
+			print_error(obj->full_name);
+		obj->minor = minor(obj->buf.st_rdev);
 		if (errno)
-			error(obj->name);
+			print_error(obj->full_name);
 	}
 }
 

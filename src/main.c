@@ -43,8 +43,9 @@ int			main(int argc, char **argv)
 		return (1);
 //	print_flags(flags);
 //	print_args(list);
-	if (print(list, flags))
+	if (!(print(list, flags, argc - n)))
 		return (1);
-	free_obj(list);
+	if (argc - n <= 1)
+		free_obj(list);
 	return (0);
 }

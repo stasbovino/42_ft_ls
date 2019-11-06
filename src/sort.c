@@ -37,7 +37,7 @@ t_obj	*obj_sort_time(t_obj *obj)
 	if (obj->next && (obj->buf.st_mtime < obj->next->buf.st_mtime))
 		obj = obj_swap(obj, obj->next);
 	else if (obj->next && (obj->buf.st_mtime == obj->next->buf.st_mtime))
-		if (obj->next && (obj->buf.st_mtim.tv_nsec < obj->next->buf.st_mtim.tv_nsec))
+		if (obj->next && (obj->buf.st_mtimespec.tv_nsec < obj->next->buf.st_mtimespec.tv_nsec))
 			obj = obj_swap(obj, obj->next); 
 	obj->next = obj_sort_time(obj->next);
 	if (obj->next && (obj->buf.st_mtime < obj->next->buf.st_mtime))
@@ -46,7 +46,7 @@ t_obj	*obj_sort_time(t_obj *obj)
 		obj->next = obj_sort_time(obj->next);
 	}
 	else if (obj->next && (obj->buf.st_mtime == obj->next->buf.st_mtime))
-		if (obj->next && (obj->buf.st_mtim.tv_nsec < obj->next->buf.st_mtim.tv_nsec))
+		if (obj->next && (obj->buf.st_mtimespec.tv_nsec < obj->next->buf.st_mtimespec.tv_nsec))
 		{
 			obj = obj_swap(obj, obj->next);
 	        	obj->next = obj_sort_time(obj->next);
@@ -95,4 +95,3 @@ int	sort_obj(t_obj **obj, t_flags flags)
 		*obj = obj_reverse(*obj);
 	return (1);
 }
-
