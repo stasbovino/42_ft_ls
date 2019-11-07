@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 10:08:29 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 10:08:30 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:47:38 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int			print_dir(t_obj *list, t_flags flags, int printname)
 	if (errno)
 		print_error(NULL);
 	sort_obj(&obj, flags);
-	print_objs(obj, flags);
+	print_objs(obj, flags, 1);
 	if (flags.recursive == 1)
 		recursive_dir(obj, flags);
 	free_obj(obj);

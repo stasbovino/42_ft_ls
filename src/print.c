@@ -6,13 +6,13 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:42:26 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 11:36:58 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:47:52 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void		print_objs(t_obj *obj, t_flags flags)
+void		print_objs(t_obj *obj, t_flags flags, int is_dir)
 {
 	int	new_line;
 
@@ -21,7 +21,7 @@ void		print_objs(t_obj *obj, t_flags flags)
 	new_line = (obj) ? 1 : 0;
 	if (flags.list_output == 1)
 	{
-		formatting(obj, 1);
+		formatting(obj, is_dir);
 		return ;
 	}
 	else
@@ -76,7 +76,7 @@ int			print_argv(t_obj *list, t_flags flags)
 	if (files)
 	{
 		sort_obj(&files, flags);
-		print_objs(files, flags);
+		print_objs(files, flags, 0);
 		ft_printf("\n");
 	}
 	tmp = dirs;
