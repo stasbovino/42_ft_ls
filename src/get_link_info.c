@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:40:18 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 12:38:03 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 13:01:02 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int			get_link_data(t_obj *new)
 	if (stat(new->full_name, &new->link_data) == -1)
 	{
 		errno = 0;
+		free(s);
 		return (0);
 	}
 	new->link_name = ft_strdup(s);
