@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 10:08:29 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 12:07:05 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 12:52:15 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@ int			create_filling(t_obj **dst, t_flags flags, DIR *dir, t_obj *list)
 		add_obj(dst, create_obj(entry->d_name, new_path), flags);
 		free(new_path);
 	}
+	if (!*dst)
+	{
+		closedir(dir);
+		return (1);
+	}
 	return (0);
 }
 
@@ -64,7 +69,8 @@ int			print_dir(t_obj *list, t_flags flags, int printname)
 		print_error((list->link_case == 1) ? list->link_name : list->name);
 		return (1);
 	}
-	create_filling(&obj, flags, dir, list);
+	if (create_filling(&obj, flags, dir, list))
+		return (1);
 	if (errno)
 		print_error(NULL);
 	sort_obj(&obj, flags);
