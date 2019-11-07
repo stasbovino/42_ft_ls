@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:40:18 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 09:42:04 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 12:06:51 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int			get_only_path(char *s)
 	int last;
 
 	i = -1;
-	last = 0;
+	last = -1;
 	while (s[++i])
 		if (s[i] == '/')
 			last = i;
@@ -27,7 +27,8 @@ int			get_only_path(char *s)
 
 int			get_link_data(t_obj *new)
 {
-	char *s;
+	char	*s;
+	int		n;
 
 	s = ft_strnew(256);
 	readlink(new->full_name, s, 256);
@@ -37,8 +38,8 @@ int			get_link_data(t_obj *new)
 		return (0);
 	}
 	new->link_name = ft_strdup(s);
-	new->full_link_name = ft_strjoin(ft_strsub(new->full_name, 0,
-				get_only_path(new->full_name)), new->link_name);
+	n = get_only_path(new->full_name);
+	new->full_link_name = ft_strjoin(ft_strsub(new->full_name, 0, n), new->link_name);
 	free(s);
 	if (S_ISDIR(new->link_data.st_mode))
 		new->link_case = 1;
