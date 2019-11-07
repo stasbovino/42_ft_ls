@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:39:16 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 09:39:17 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:37:35 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void		set_obj(t_obj *obj)
 	}
 }
 
-void		formatting(t_obj *obj)
+void		formatting(t_obj *obj, int is_dir)
 {
 	t_format	format;
 	t_obj		*tmp;
@@ -79,5 +79,5 @@ void		formatting(t_obj *obj)
 		compare(obj, &format);
 		obj = obj->next;
 	}
-	print_list(tmp, format);
+	print_list(tmp, format, is_dir);
 }

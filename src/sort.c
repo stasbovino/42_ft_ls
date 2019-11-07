@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 10:11:03 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 10:13:05 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:22:14 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_obj	*obj_swap(t_obj *a, t_obj *b)
 	return (b);
 }
 
-t_obj			*obj_reverse(t_obj *obj)
+t_obj	*obj_reverse(t_obj *obj)
 {
 	t_obj *a;
 	t_obj *b;
@@ -64,21 +64,6 @@ t_obj	*obj_sort_time(t_obj *obj)
 	return (obj);
 }
 
-t_obj	*obj_sort_size(t_obj *obj)
-{
-	if (!obj)
-		return (NULL);
-	if (obj->next && (obj->buf.st_size < obj->next->buf.st_size))
-		obj = obj_swap(obj, obj->next);
-	obj->next = obj_sort_size(obj->next);
-	if (obj->next && (obj->buf.st_size < obj->next->buf.st_size))
-	{
-		obj = obj_swap(obj, obj->next);
-		obj->next = obj_sort_size(obj->next);
-	}
-	return (obj);
-}
-
 t_obj	*obj_sort_ascii(t_obj *obj)
 {
 	if (!obj)
@@ -94,13 +79,11 @@ t_obj	*obj_sort_ascii(t_obj *obj)
 	return (obj);
 }
 
-int	sort_obj(t_obj **obj, t_flags flags)
+int		sort_obj(t_obj **obj, t_flags flags)
 {
 	*obj = obj_sort_ascii(*obj);
 	if (flags.modif_data_sort == 1)
 		*obj = obj_sort_time(*obj);
- 	//if (flags.size_sort == 1)
-	//	*obj = obj_sort_size(*obj); 
 	if (flags.reverse == 1)
 		*obj = obj_reverse(*obj);
 	return (1);

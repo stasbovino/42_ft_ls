@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:42:26 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 10:02:01 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:36:58 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void		print_objs(t_obj *obj, t_flags flags)
 	new_line = (obj) ? 1 : 0;
 	if (flags.list_output == 1)
 	{
-		formatting(obj);
+		formatting(obj, 1);
 		return ;
 	}
 	else
@@ -106,7 +106,7 @@ int			print(t_obj *list, t_flags flags, int count)
 		else
 		{
 			if (flags.list_output == 1)
-				formatting(list);
+				formatting(list, 0);
 			else
 				ft_printf("%s\n", list->name);
 		}

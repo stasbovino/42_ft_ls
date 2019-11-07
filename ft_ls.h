@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:37:37 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 09:58:47 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:37:13 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,9 @@ int					print_file(t_obj *list, t_flags flags);
 int					recursive_dir(t_obj *obj, t_flags flags);
 int					print(t_obj *list, t_flags flags, int count);
 
-void				formatting(t_obj *obj);
+void				formatting(t_obj *obj, int is_dir);
 char				define_type(t_obj *obj);
-void				print_list(t_obj *obj, t_format format);
+void				print_list(t_obj *obj, t_format format, int is_dir);
 void				print_objs(t_obj *obj, t_flags flags);
 
 int					check_for_self(char *s);

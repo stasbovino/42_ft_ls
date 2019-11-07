@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 10:13:36 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 10:13:38 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 11:34:40 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,13 @@ int			print_link_content(t_obj *obj)
 	return (ret);
 }
 
-void		print_list(t_obj *obj, t_format format)
+void		print_list(t_obj *obj, t_format format, int is_dir)
 {
 	char s[12];
 
 	if (!obj)
 		return ;
-	if (S_ISDIR(obj->buf.st_mode))
+	if (is_dir)
 		ft_printf("total %d\n", format.blocks);
 	while (obj)
 	{
