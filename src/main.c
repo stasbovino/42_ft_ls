@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/07 09:39:53 by gwyman-m          #+#    #+#             */
+/*   Updated: 2019/11/07 09:39:54 by gwyman-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ls.h"
 
 char		*add_name(char *s, int isdir)
@@ -11,14 +23,8 @@ char		*add_name(char *s, int isdir)
 	if (s[len - 1] == '/')
 		isdir = 0;
 	ret = ft_strdup(s);
-	if (ret == NULL)
-		return (NULL);
 	if (isdir == 1)
-	{
 		ret = ft_strrejoin(ret, "/");
-		if (ret == NULL)
-			return (NULL);
-	}
 	return (ret);
 }
 
@@ -39,12 +45,8 @@ int			main(int argc, char **argv)
 
 	init_flags(&flags);
 	n = get_flags(argc, argv, &flags);
-	if (!(list = get_args(argc, argv, n)))
-		return (1);
-//	print_flags(flags);
-//	print_args(list);
-	if (!(print(list, flags, argc - n)))
-		return (1);
+	list = get_args(argc, argv, n, flags);
+	print(list, flags, argc - n);
 	if (argc - n <= 1)
 		free_obj(list);
 	return (0);

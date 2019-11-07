@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/07 09:42:26 by gwyman-m          #+#    #+#             */
+/*   Updated: 2019/11/07 10:02:01 by gwyman-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ls.h"
 
 void		print_objs(t_obj *obj, t_flags flags)
@@ -9,7 +21,7 @@ void		print_objs(t_obj *obj, t_flags flags)
 	new_line = (obj) ? 1 : 0;
 	if (flags.list_output == 1)
 	{
-		formatting(obj, flags);
+		formatting(obj);
 		return ;
 	}
 	else
@@ -29,6 +41,29 @@ void		print_objs(t_obj *obj, t_flags flags)
 		ft_printf("\n");
 }
 
+int			create_lists(t_obj **files, t_obj **dirs, t_obj *list, t_flags fl)
+{
+	t_obj *tmp;
+
+	while (list)
+	{
+		tmp = list->next;
+		list->next = NULL;
+		(S_ISDIR(list->buf.st_mode)) ?
+			add_obj(dirs, list, fl) : add_obj(files, list, fl);
+		list = tmp;
+	}
+	return (0);
+}
+
+void		free_lists(t_obj *dirs, t_obj *files)
+{
+	if (dirs)
+		free_obj(dirs);
+	if (files)
+		free_obj(files);
+}
+
 int			print_argv(t_obj *list, t_flags flags)
 {
 	t_obj *tmp;
@@ -37,16 +72,7 @@ int			print_argv(t_obj *list, t_flags flags)
 
 	files = NULL;
 	dirs = NULL;
-	while (list)
-	{
-		tmp = list->next;
-		list->next = NULL;
-		if (S_ISDIR(list->buf.st_mode))
-			add_obj(&dirs, list);
-		else
-			add_obj(&files, list);
-		list = tmp;
-	}
+	create_lists(&files, &dirs, list, flags);
 	if (files)
 	{
 		sort_obj(&files, flags);
@@ -58,34 +84,32 @@ int			print_argv(t_obj *list, t_flags flags)
 		sort_obj(&dirs, flags);
 	while (dirs)
 	{
-		if (print_dir(dirs, flags, 1))
-			if (errno == ENOMEM)
-				return (1);
+		print_dir(dirs, flags, 1);
 		dirs = dirs->next;
 		if (dirs)
 			ft_printf("\n");
 	}
-	if (tmp)
-		free_obj(tmp);
-	if (files)
-		free_obj(files);
+	free_lists(tmp, files);
 	return (0);
 }
 
 int			print(t_obj *list, t_flags flags, int count)
 {
+	if (!list)
+		return (1);
 	if (count > 1)
 		print_argv(list, flags);
 	else
 	{
-		if (S_ISDIR(list->buf.st_mode))
-		{
-			if (print_dir(list, flags, 0))
-				if (errno == ENOMEM)
-					return (1);
-		}
+		if (S_ISDIR(list->buf.st_mode) || list->link_case == 1)
+			print_dir(list, flags, 0);
 		else
-			ft_printf("%s", list->name);
+		{
+			if (flags.list_output == 1)
+				formatting(list);
+			else
+				ft_printf("%s\n", list->name);
+		}
 	}
 	return (0);
 }

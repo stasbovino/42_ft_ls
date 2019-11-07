@@ -1,1 +1,0 @@
-Makefile ft_ls.h compare.sh test mine.txt src libft need.txt ft_ls author
