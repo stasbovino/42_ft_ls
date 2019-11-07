@@ -6,7 +6,7 @@
 /*   By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 09:41:05 by gwyman-m          #+#    #+#             */
-/*   Updated: 2019/11/07 09:41:06 by gwyman-m         ###   ########.fr       */
+/*   Updated: 2019/11/07 12:36:27 by gwyman-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,10 @@ void		*free_obj(t_obj *lst)
 			free(lst->group);
 		if (lst->owner)
 			free(lst->owner);
+		if (lst->full_link_name)
+			free(lst->full_link_name);
+		if (lst->link_name)
+			free(lst->link_name);
 		free(lst);
 		lst = tmp;
 	}
