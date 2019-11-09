@@ -6,7 +6,7 @@
 #    By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/02 17:48:56 by gwyman-m          #+#    #+#              #
-#    Updated: 2019/11/09 16:50:50 by gwyman-m         ###   ########.fr        #
+#    Updated: 2019/11/09 17:00:28 by gwyman-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,8 @@ submodule = `git submodule | grep "-"`
 
 .PHONY = submodule all clean fclean re
 
+.SILENT: subm
+
 RULE=$(firstword $(MAKECMDGOALS))
 
 all: subm $(NAME)
@@ -40,18 +42,18 @@ all: subm $(NAME)
 .PHONY: subm all clean fclean re
 
 subm:
-	@if [[ -n $(submodule) ]]; then\
-		@git submodule init;\
-		@git submodule update;\
-	@fi
+	if [[ -n $(submodule) ]]; then\
+		git submodule init;\
+		git submodule update;\
+	fi
 
 $(NAME): $(OBJ)
 	@make -C libft/
-	gcc $(FLAGS) $(OBJ) -o $(NAME) $(LIB)
+	@gcc $(FLAGS) $(OBJ) -o $(NAME) $(LIB)
 	@printf "\e[?25h\033[0;32mft_ls is ready\033[0m\n"
 
 %.o: %.c $(HEADER)
-	gcc -c $(FLAGS) $< -o $@
+	@gcc -c $(FLAGS) $< -o $@
 	@printf "\e[?25l\033[0;34mcompiling $<\033[0m\033\r"
 	@printf "                                 \r"
 
