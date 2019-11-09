@@ -6,7 +6,7 @@
 #    By: gwyman-m <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/02 17:48:56 by gwyman-m          #+#    #+#              #
-#    Updated: 2019/11/07 11:23:03 by gwyman-m         ###   ########.fr        #
+#    Updated: 2019/11/09 16:50:50 by gwyman-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,11 +29,21 @@ OBJ = $(SRC:%.c=%.o)
 
 VPATH := src
 
-.PHONY=all clean fclean re
+submodule = `git submodule | grep "-"`
+
+.PHONY = submodule all clean fclean re
 
 RULE=$(firstword $(MAKECMDGOALS))
 
-all: $(NAME)
+all: subm $(NAME)
+
+.PHONY: subm all clean fclean re
+
+subm:
+	@if [[ -n $(submodule) ]]; then\
+		@git submodule init;\
+		@git submodule update;\
+	@fi
 
 $(NAME): $(OBJ)
 	@make -C libft/
