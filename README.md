@@ -7,4 +7,4 @@ My recode is not full, it supports flags -a, -R, -l, -r, -t as original `ls`. It
 
 #### Usage:
 `make`\
-`./ft_ls *flags* *args*`
+`./ft_ls [-aRlrt] [file ...]`
